@@ -1,0 +1,10 @@
+div#narbar-button-group {
+	cursor: pointer;
+	position: fixed;
+	right: 0;
+	padding: 8px;
+}
+
+Button {
+	padding: 8px;
+}

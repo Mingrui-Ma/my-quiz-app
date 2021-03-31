@@ -1,0 +1,39 @@
+Show correct/false answer (alert)
+ - (dependent)
+    show correct answer if wrong
+    show cumulative correct answers
+    change timeout timer
+    cynical alerts
+Tooltips for all
+
+
+cheating mode (highlight correct answer)
+ * show a different end screen
+ - cynical cheating mode (only correct button shows)
+
+
+disclaimer (pop up)
+"Built by Mingrui Ma with ReactJS (link), React-Bootstrap (link), react-icons and Axios (links). 
+Quiz questions are provided by users on the Open Trivia Database (link).
+GitHub link"
+
+
+
+
+
+Cynical alerts:
+on correct answer:
+[
+    "Like you didn't just look that up on Google.",
+    "That one's easy.",
+    "You were right... this time.",
+    "Wrong again!... Wait no I read that wrong, you got that right.",
+]
+
+on wrong answer:
+[
+    "Wrong! You lose! Good day sir!",
+    "You've got to do better than that.",
+    "Really? {chosenAnswer}?",
+    "I could have gotten that one right and I'm some text on a screen.",
+]
