@@ -1,5 +1,6 @@
 import React, { Component, useState, useEffect } from "react";
 import { Button, Alert } from "react-bootstrap";
+import { BsQuestionCircle } from "react-icons/bs";
 
 function Question(props) {
 	const [chosenAnswer, setChosenAnswer] = useState(""),
@@ -35,17 +36,17 @@ function Question(props) {
 		if (sizeOfFontNumber > 100) setButtonSize("lg");
 	}, [sizeOfFont]);
 
-	const [handleSubmit, setHandleSubmit] = useState(() => 1);
-	useEffect(() => {
-		if (enableAlert) setHandleSubmit(handleSubmitWithAlert);
-		else setHandleSubmit(handleSubmitNoAlert);
-	}, [enableAlert]);
+	// const [handleSubmit, setHandleSubmit] = useState(() => 1);
+	// useEffect(() => {
+	// 	if (enableAlert) setHandleSubmit(handleSubmitWithAlert);
+	// 	else setHandleSubmit(handleSubmitNoAlert);
+	// }, [enableAlert]);
 
 	if (props === []) {
 		//loading not complete
 		return <h4>Loading...</h4>;
 	}
-
+	
 	//formatting input
 	let question_formatted = question.replace(/&quot;/g, '"');
 	question_formatted = question_formatted.replace(/&#039;/g, "'");
@@ -77,7 +78,7 @@ function Question(props) {
 		if (type === "boolean") {
 			//true/false question
 			return (
-				<div id="answerButtons">
+				<div id="answer-buttons">
 					<Button
 						variant="outline-primary"
 						size={buttonSize}
@@ -107,7 +108,7 @@ function Question(props) {
 		//console.log("answers ", answers);
 
 		return (
-			<div>
+			<div id="answer-buttons">
 				<Button
 					variant="outline-primary button-answer"
 					size={buttonSize}
@@ -160,7 +161,7 @@ function Question(props) {
 		setChosenAnswer("");
 		setTimeout(() => {
 			setShowAlert(false);
-		}, alertTimeout);
+		}, alertTimeout*1000);
 	}
 
 	function handleSubmitNoAlert() {
@@ -176,13 +177,24 @@ function Question(props) {
 		if (chosenAnswer == "") {
 			return <React.Fragment></React.Fragment>;
 		}
+		let enablealerttype = typeof enableAlert;
+		console.log(
+			"enable alert is ",
+			enableAlert,
+			" of type ",
+			enablealerttype
+		);
 		return (
 			<React.Fragment>
 				<Button
 					variant="primary"
 					value="Submit"
 					size={buttonSize}
-					onClick={handleSubmit}
+					onClick={
+						(enableAlert === "true")
+							? handleSubmitWithAlert
+							: handleSubmitNoAlert
+					}
 				>
 					Submit
 				</Button>{" "}
@@ -212,7 +224,7 @@ function Question(props) {
 				{alertText}
 			</Alert>
 			<h3 style={{ fontSize: sizeOfFontLarge }}>
-				Question: {question_formatted}
+				<BsQuestionCircle color="blue" /> {question_formatted}
 			</h3>
 			<hr></hr>
 			{generateAnswers()}

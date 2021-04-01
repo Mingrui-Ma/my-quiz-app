@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Disclaimer from "./Disclaimer";
-import { BsFillGearFill } from "react-icons/bs";
+import Setting from "./Setting";
+import { BsGear } from "react-icons/bs";
 import { Button, OverlayTrigger, Tooltip, Navbar } from "react-bootstrap";
 
 export default function StartScreen(props) {
@@ -8,12 +9,24 @@ export default function StartScreen(props) {
 		document.title = "my-quiz-app-start";
 	}, []);
 
-	const { quizURL, setQuizURL, amount, setAmount } = props;
+	const {
+		quizURL,
+		setQuizURL,
+		amount,
+		setAmount,
+		sizeOfFont,
+		setSizeOfFont,
+		enableAlert,
+		setEnableAlert,
+		width,
+		setWidth,
+	} = props;
 	//URL template: https://opentdb.com/api.php?amount=30&category=10&difficulty=medium
 	//setQuizURL("https://opentdb.com/api.php?amount=10");
 
 	const [category, setCategory] = useState("any"),
-		[difficulty, setDifficulty] = useState("any");
+		[difficulty, setDifficulty] = useState("any"),
+		[showSetting, setShowSetting] = useState(false);		//startScreen has a different showSetting as mainScreen
 
 	function handleAmountChange(e) {
 		setAmount(e.target.value);
@@ -46,33 +59,75 @@ export default function StartScreen(props) {
 		setDifficulty("any");
 	}
 
+	function handleSetting() {
+		setShowSetting(!showSetting);
+	}
+
 	return (
 		<div>
-			<form>
-				<OverlayTrigger
-					placement="bottom"
-					overlay={
-						<Tooltip>
-							"My" stands for "Myron". (Thanks Michael Widenius
-							for the idea)
-						</Tooltip>
-					}
+			<Navbar bg="dark" variant="dark">
+				<Navbar.Brand href="#home">
+					<img
+						alt=""
+						src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1920px-React-icon.svg.png"
+						width="44"
+						height="30"
+						className="d-inline-block align-top"
+					/>{" "}
+					<OverlayTrigger
+						placement="bottom"
+						overlay={
+							<Tooltip>
+								"My" stands for "Myron". (Thanks Michael
+								Widenius for the idea)
+							</Tooltip>
+						}
+					>
+						<span>Welcome to My-Quiz-App!</span>
+					</OverlayTrigger>
+				</Navbar.Brand>
+				<div
+					id="navbar-button-group"
+					style={{
+						cursor: "pointer",
+						position: "fixed",
+						right: "10px",
+					}}
 				>
-					<Navbar bg="dark" variant="dark">
-						<Navbar.Brand href="#home">
-							<img
-								alt=""
-								src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1920px-React-icon.svg.png"
-								width="44"
-								height="30"
-								className="d-inline-block align-top"
-							/>{" "}
-							Welcome to My-Quiz-App!
-						</Navbar.Brand>
-					</Navbar>
-				</OverlayTrigger>
-
-				<h2>Customize quiz</h2>
+					<OverlayTrigger
+						placement="bottom"
+						overlay={<Tooltip>Settings</Tooltip>}
+					>
+						<BsGear
+							style={{ padding: "6px", paddingRight: "10px" }}
+							onClick={handleSetting}
+							size={42}
+							color="white"
+						/>
+					</OverlayTrigger>
+				</div>
+			</Navbar>
+			<Setting
+				showSetting={showSetting}
+				sizeOfFont={sizeOfFont}
+				handleFontChange={handleFontChange}
+				enableAlert={enableAlert}
+				handleAlertChange={handleAlertChange}
+				timeoutSettingVisibility={timeoutSettingVisibility}
+				alertTimeout={alertTimeout}
+				handleAlertTimeoutChange={handleAlertTimeoutChange}
+			/>
+			<form
+				style={{
+					position: "relative",
+					left: width / 2 - 100,
+					width: width / 2 + 100,
+				}}
+			>
+				<h2>
+					width: {width} <br />
+					Customize quiz
+				</h2>
 
 				<OverlayTrigger
 					placement="top"

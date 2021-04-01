@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import StartScreen from "./Components/StartScreen";
 import MainScreen from "./Components/MainScreen";
 import EndScreen from "./Components/EndScreen";
@@ -10,7 +10,19 @@ function App() {
 		[corrects, setCorrects] = useState(0),
 		[currentQuestion, setCurrentQuestion] = useState(1),
 		[enableAlert, setEnableAlert] = useState(true),
-		[sizeOfFont, setSizeOfFont] = useState("100%"); //fontSize is taken in namespace
+		[sizeOfFont, setSizeOfFont] = useState("110%"), //fontSize is taken in namespace
+		[width, setWidth] = useState(window.innerWidth);
+
+		useEffect(() =>	{
+			const handleResize = () => setWidth(window.innerWidth);
+			let typeofHandleResize = typeof handleResize;
+			console.log("type of handle resize: ", typeofHandleResize);
+			window.addEventListener('resize', handleResize);
+			return () =>	{
+				window.removeEventListener('resize', handleResize);
+			}
+			//return width;
+		})
 
 	if (quizURL === "")
 		return (
@@ -24,6 +36,8 @@ function App() {
 				setSizeOfFont={setSizeOfFont}
 				enableAlert={enableAlert}
 				setEnableAlert={setEnableAlert}
+				width={width}
+				setWidth={setWidth}
 			/>
 		);
 	if (currentQuestion <= amount)
@@ -41,6 +55,7 @@ function App() {
 				setSizeOfFont={setSizeOfFont}
 				enableAlert={enableAlert}
 				setEnableAlert={setEnableAlert}
+				width={width}
 			/>
 		);
 	return (
@@ -52,6 +67,7 @@ function App() {
 			setCorrects={setCorrects}
 			setCurrentQuestion={setCurrentQuestion}
 			sizeOfFont={sizeOfFont}
+			width={width}
 		/>
 	);
 }

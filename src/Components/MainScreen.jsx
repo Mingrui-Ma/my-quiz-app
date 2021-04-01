@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Question from "./Question";
 import Disclaimer from "./Disclaimer";
+import Setting from "./Setting";
 import "./MainScreen.css";
 import axios from "axios";
 import { BsGear } from "react-icons/bs";
@@ -28,6 +29,7 @@ export default function MainScreen(props) {
 		setSizeOfFont,
 		enableAlert,
 		setEnableAlert,
+		width
 	} = props;
 
 	//response contains the quiz JSON from the site.
@@ -46,9 +48,15 @@ export default function MainScreen(props) {
 				type: "multiple",
 			},
 		]),
-		[alertTimeout, setAlertTimeout] = useState(3000),
+		[alertTimeout, setAlertTimeout] = useState(3),
 		[showSetting, setShowSetting] = useState(false),
-		[randomOrder, setRandomOrder] = useState([]);
+		[randomOrder, setRandomOrder] = useState([]),
+		[progressBarHeight, setProgressBarHeight] = useState(20),
+		[timeoutSettingVisibility, setTimeoutSettingVisibility] = useState(
+			"inline"
+		);
+
+
 
 	useEffect(() => {
 		document.title = `Question ${currentQuestion} - My-Quiz-App`;
@@ -65,9 +73,16 @@ export default function MainScreen(props) {
 			.catch((err) => console.log("error: ", err));
 	}, []);
 
-	function handleHome() {
-		setQuizURL("");
-	}
+	useEffect(() => {
+		if (enableAlert == "true") {
+			setTimeoutSettingVisibility("inline");
+			//console.log("visibility is now inline.");
+		}
+		if (enableAlert == "false") {
+			setTimeoutSettingVisibility("none");
+			//console.log("visibility is now none.");
+		}
+	}, [enableAlert]);
 
 	/**
 	 *
@@ -87,24 +102,42 @@ export default function MainScreen(props) {
 		//console.log("order: ", randomProxy);
 	}, [currentQuestion, quizURL]);
 
-	function handleSetting() {
-		setShowSetting(!showSetting);
+	//end of hooks section
+
+	function handleHome() {
+		setQuizURL("");
 	}
 
-	const [progressBarHeight, setProgressBarHeight] = useState(20);
 	useEffect(() => {
 		let height = parseFloat(sizeOfFont);
 		setProgressBarHeight((height / 100) * 20);
 	}, [sizeOfFont]);
+
+	function handleSetting() {
+		setShowSetting(!showSetting);
+	}
+
 	function handleFontChange(e) {
 		setSizeOfFont(e.target.value);
 		//console.log("size of font: ", sizeOfFont);
 	}
+
+
+
 	function handleAlertChange(e) {
 		setEnableAlert(e.target.value);
+		console.log("handle enable alert: ", typeof e.target.value);
 	}
+
+
+	function handleAlertTimeoutChange(e) {
+		setAlertTimeout(e.target.value);
+	}
+
+
 	return (
 		<div>
+			{/* navbar begins */}
 			<Navbar bg="dark" variant="dark">
 				<Navbar.Brand href="#home">
 					<img
@@ -115,17 +148,6 @@ export default function MainScreen(props) {
 						className="d-inline-block align-top"
 					/>{" "}
 					My-Quiz-App
-					{/* <OverlayTrigger
-						placement="bottom"
-						overlay={
-							<Tooltip>
-								"My" stands for "Myron". (Thanks Michael
-								Widenius for the idea)
-							</Tooltip>
-						}
-					> 	
-						Welcome to My-Quiz-App!
-					</OverlayTrigger> */}
 				</Navbar.Brand>
 				<div
 					id="navbar-button-group"
@@ -164,46 +186,19 @@ export default function MainScreen(props) {
 					</OverlayTrigger>
 				</div>
 			</Navbar>
-
-			<Alert
-				show={showSetting}
-				variant="dark"
-				style={{ fontSize: sizeOfFont }}
-			>
-				implement setting here
-				<form>
-					<label htmlFor="font-size">Font size</label>
-					<select
-						name="font-size"
-						value={sizeOfFont}
-						onChange={handleFontChange}
-					>
-						<option value="80%">Small</option>
-						<option value="110%">Medium</option>
-						<option value="140%">Large</option>
-					</select>
-					<br />
-					{/* <OverlayTrigger
-					placement="bottom"
-					overlay={
-						<Tooltip>
-							Show a notification for whether you answered the question correctly.
-						</Tooltip>
-					}>
-
-					</OverlayTrigger> */}
-					<label htmlFor="notify">Notify after submitting</label>
-					<select
-						name="notify"
-						value={enableAlert}
-						onChange={handleAlertChange}
-					>
-						<option value={true}>Yes</option>
-						<option value={false}>No</option>
-					</select>
-					<br />
-				</form>
-			</Alert>
+			{/* navbar ends */}
+			{/* Setting begins */}
+			<Setting
+				showSetting={showSetting}
+				sizeOfFont={sizeOfFont}
+				handleFontChange={handleFontChange}
+				enableAlert={enableAlert}
+				handleAlertChange={handleAlertChange}
+				timeoutSettingVisibility={timeoutSettingVisibility}
+				alertTimeout={alertTimeout}
+				handleAlertTimeoutChange={handleAlertTimeoutChange}
+			/>
+			{/* Setting ends */}
 			<ProgressBar
 				style={{ fontSize: sizeOfFont, height: progressBarHeight }}
 				now={(currentQuestion / amount) * 100}
@@ -231,8 +226,8 @@ export default function MainScreen(props) {
 				alertTimeout={alertTimeout}
 				sizeOfFont={sizeOfFont}
 				enableAlert={enableAlert}
+				width={width}
 			/>
-
 			<Disclaimer />
 		</div>
 	);

@@ -1,3 +1,9 @@
+div#answer-buttons	{
+	position: fixed;
+	left: 0;
+	right: 0;
+}
+
 label {
 	padding: 5px;
 }
