@@ -1,16 +1,11 @@
-div#answer-buttons	{
-	position: fixed;
-	left: 0;
-	right: 0;
-}
-
 label {
 	padding: 5px;
 }
 
-
-Button {
-	padding: 5px;
+.Button {
+	padding: 10px;
+	border: 10px;
+	color: black;
 }
 
 div#narbar-button-group {
@@ -25,11 +20,71 @@ Gear {
 	padding: 8px;
 }
 
-div#copyright-disclaimer {
-	font-size: small;
+footer#copyright-disclaimer {
 	text-align: center;
 	position: fixed;
 	left: 0;
 	bottom: 0;
 	right: 0;
+	z-index: -1;
+	vertical-align: bottom;
+}
+
+label {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+select {
+	width: 13%;
+}
+.medium-width-startScreen-field {
+	width: 10%;
+}
+.small-width-startScreen-field {
+	width: 7%;
+}
+.large-width-startScreen-field {
+	width: 15%;
+}
+
+.medium-width-startScreen-category {
+	width: 19%;
+}
+.small-width-startScreen-category {
+	width: 14.5%;
+}
+.large-width-startScreen-category {
+	width: 24%;
+}
+
+.medium-width-setting-label {
+	width: 8%;
+}
+.small-width-setting-label {
+	width: 6%;
+}
+.large-width-setting-label {
+	width: 10%;
+}
+
+.medium-width-setting-field {
+	width: 6%;
+}
+.small-width-setting-field {
+	width: 4%;
+}
+.large-width-setting-field {
+	width: 7%;
+}
+
+li {
+	margin: 10px;
+}
+
+.thumb-up {
+	list-style-type: "\1F44D";
+}
+.thumb-down {
+	list-style-type: "\1F44E";
 }

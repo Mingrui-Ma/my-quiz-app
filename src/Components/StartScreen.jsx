@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Disclaimer from "./Disclaimer";
 import Setting from "./Setting";
+import TopBanner from "./TopBanner";
 import { BsGear } from "react-icons/bs";
 import { Button, OverlayTrigger, Tooltip, Navbar } from "react-bootstrap";
 
 export default function StartScreen(props) {
-	useEffect(() => {
-		document.title = "my-quiz-app-start";
-	}, []);
-
 	const {
 		quizURL,
 		setQuizURL,
@@ -18,15 +15,107 @@ export default function StartScreen(props) {
 		setSizeOfFont,
 		enableAlert,
 		setEnableAlert,
+		alertTimeout,
+		setAlertTimeout,
+		handleFontChange,
+		handleAlertChange,
+		handleAlertTimeoutChange,
+		timeoutSettingVisibility,
+		setTimeoutSettingVisibility,
+		buttonSize,
+		setButtonSize,
+		sizeOfFontLarge,
+		setSizeOfFontLarge,
+		hasCountDown,
+		setHasCountDown,
+		countDown,
+		setCountDown,
+		handleCountDownChange,
+		handleCountDownTimeChange,
+		countDownSettingVisibility,
+		setCountDownSettingVisibility,
+		iconScale,
 		width,
-		setWidth,
+		scoreHistory,
+		setScoreHistory,
+		disclaimerVisibility,
+		setDisclaimerVisibility,
+		handleDisclaimerVisibilityChange,
 	} = props;
 	//URL template: https://opentdb.com/api.php?amount=30&category=10&difficulty=medium
 	//setQuizURL("https://opentdb.com/api.php?amount=10");
 
 	const [category, setCategory] = useState("any"),
 		[difficulty, setDifficulty] = useState("any"),
-		[showSetting, setShowSetting] = useState(false);		//startScreen has a different showSetting as mainScreen
+		[showSetting, setShowSetting] = useState(false), //startScreen has a different showSetting as mainScreen
+		[scoreHistoryLi, setScoreHistoryLi] = useState(listHistoryLi()),
+		[fieldWidth, setFieldWidth] = useState(
+			"medium-width-startScreen-field"
+		),
+		[categoryWidth, setCategoryWidth] = useState(
+			"medium-width-startScreen-category"
+		),
+		[historyWidth, setHistoryWidth] = useState(160),
+		[historyBottom, setHistoryBottom] = useState(220),
+		[historyBorder, setHistoryBorder] = useState(3);
+
+	useEffect(() => {
+		document.title = "Welcome to My-Quiz-App";
+	}, []);
+
+	useEffect(() => {
+		// console.log(sizeOfFont);
+		if (sizeOfFont === "110%") {
+			setFieldWidth("medium-width-startScreen-field");
+			setCategoryWidth("medium-width-startScreen-category");
+			setHistoryWidth(160);
+			setHistoryBottom(220);
+			setHistoryBorder(3);
+			// console.log("setting width now medium");
+		}
+		if (sizeOfFont === "80%") {
+			setFieldWidth("small-width-startScreen-field");
+			setCategoryWidth("small-width-startScreen-category");
+			setHistoryWidth(130);
+			setHistoryBottom(190);
+			setHistoryBorder(2);
+			// console.log("setting width now small");
+		}
+		if (sizeOfFont === "140%") {
+			setFieldWidth("large-width-startScreen-field");
+			setCategoryWidth("large-width-startScreen-category");
+			setHistoryWidth(210);
+			setHistoryBottom(260);
+			setHistoryBorder(4);
+			// console.log("setting width now large");
+		}
+	}, [sizeOfFont]);
+
+	useEffect(() => {
+		if (enableAlert == "true") {
+			setTimeoutSettingVisibility("inline");
+			//console.log("visibility is now inline.");
+		}
+		if (enableAlert == "false") {
+			setTimeoutSettingVisibility("none");
+			//console.log("visibility is now none.");
+		}
+	}, [enableAlert]);
+
+	useEffect(() => {
+		if (hasCountDown == "true") {
+			setCountDownSettingVisibility("inline");
+			console.log("countdown now visible.");
+		}
+		if (hasCountDown == "false") {
+			setCountDownSettingVisibility("none");
+			console.log("countdown now invisible.");
+		}
+	}, [hasCountDown]);
+
+	useEffect(() => {
+		setScoreHistoryLi(listHistoryLi());
+	}, [scoreHistory]);
 
 	function handleAmountChange(e) {
 		setAmount(e.target.value);
@@ -63,6 +152,30 @@ export default function StartScreen(props) {
 		setShowSetting(!showSetting);
 	}
 
+	function listHistoryLi() {
+		// console.log(scoreHistory);
+		const items = [];
+		for (let [idx, val] of scoreHistory.entries()) {
+			if (parseFloat(val) >= 50)
+				items.push(
+					<li className="thumb-up" key={idx}>
+						{val}
+					</li>
+				);
+			else
+				items.push(
+					<li className="thumb-down" key={idx}>
+						{val}
+					</li>
+				);
+		}
+		return items;
+	}
+
+	function handleClearHistory() {
+		setScoreHistory([]);
+	}
+
 	return (
 		<div>
 			<Navbar bg="dark" variant="dark">
@@ -70,8 +183,8 @@ export default function StartScreen(props) {
 					<img
 						alt=""
 						src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1920px-React-icon.svg.png"
-						width="44"
-						height="30"
+						width={`${40 * iconScale}`}
+						height={`${27 * iconScale}`}
 						className="d-inline-block align-top"
 					/>{" "}
 					<OverlayTrigger
@@ -83,7 +196,9 @@ export default function StartScreen(props) {
 							</Tooltip>
 						}
 					>
-						<span>Welcome to My-Quiz-App!</span>
+						<span style={{ fontSize: sizeOfFont }}>
+							Welcome to My-Quiz-App!
+						</span>
 					</OverlayTrigger>
 				</Navbar.Brand>
 				<div
@@ -101,14 +216,20 @@ export default function StartScreen(props) {
 						<BsGear
 							style={{ padding: "6px", paddingRight: "10px" }}
 							onClick={handleSetting}
-							size={42}
+							size={`${40 * iconScale}`}
 							color="white"
 						/>
 					</OverlayTrigger>
 				</div>
 			</Navbar>
+			{/* <TopBanner 
+			        iconScale={iconScale}
+					sizeOfFont={sizeOfFont}
+					handleSetting={handleSetting}
+			/> */}
 			<Setting
 				showSetting={showSetting}
+				handleSetting={handleSetting}
 				sizeOfFont={sizeOfFont}
 				handleFontChange={handleFontChange}
 				enableAlert={enableAlert}
@@ -116,21 +237,54 @@ export default function StartScreen(props) {
 				timeoutSettingVisibility={timeoutSettingVisibility}
 				alertTimeout={alertTimeout}
 				handleAlertTimeoutChange={handleAlertTimeoutChange}
+				hasCountDown={hasCountDown}
+				setHasCountDown={setHasCountDown}
+				countDown={countDown}
+				setCountDown={setCountDown}
+				handleCountDownChange={handleCountDownChange}
+				handleCountDownTimeChange={handleCountDownTimeChange}
+				countDownSettingVisibility={countDownSettingVisibility}
+				iconScale={iconScale}
+				width={width}
+				disclaimerVisibility={disclaimerVisibility}
+				setDisclaimerVisibility={setDisclaimerVisibility}
+				handleDisclaimerVisibilityChange={
+					handleDisclaimerVisibilityChange
+				}
 			/>
+			<OverlayTrigger
+				placement="bottom"
+				overlay={
+					<Tooltip>
+						Quiz questions will be randomly selected from the Open
+						Trivia DB, with the criteria declared below.
+					</Tooltip>
+				}
+			>
+				<h1
+					style={{
+						textAlign: "center",
+						marginTop: "10px",
+						fontSize: sizeOfFontLarge,
+					}}
+				>
+					{/* width: {width} <br /> */}
+					Customize Quiz
+				</h1>
+			</OverlayTrigger>
+			{/* <p>
+					1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />
+				</p> */}
 			<form
 				style={{
+					textAlign: "center",
+					marginTop: "10px",
+					fontSize: sizeOfFont,
 					position: "relative",
-					left: width / 2 - 100,
-					width: width / 2 + 100,
 				}}
 			>
-				<h2>
-					width: {width} <br />
-					Customize quiz
-				</h2>
-
 				<OverlayTrigger
-					placement="top"
+					placement="bottom"
 					overlay={
 						<Tooltip>
 							Number of questions must be between 1 and 50.
@@ -140,6 +294,7 @@ export default function StartScreen(props) {
 					<label htmlFor="trivia_amount">Number of Questions:</label>
 				</OverlayTrigger>
 				<input
+					className={fieldWidth}
 					type="number"
 					name="trivia_amount"
 					id="trivia_amount"
@@ -151,17 +306,18 @@ export default function StartScreen(props) {
 				<br />
 
 				<OverlayTrigger
-					placement="top"
+					placement="bottom"
 					overlay={
 						<Tooltip>
-							Questions will be taken from all categories, or one
-							chosen category.{" "}
+							Questions will be taken from all categories, or the
+							selected category.{" "}
 						</Tooltip>
 					}
 				>
 					<label htmlFor="trivia_category">Select Category: </label>
 				</OverlayTrigger>
 				<select
+					className={categoryWidth}
 					name="trivia_category"
 					value={category}
 					onChange={handleCategoryChange}
@@ -201,11 +357,11 @@ export default function StartScreen(props) {
 				<br />
 
 				<OverlayTrigger
-					placement="top"
+					placement="bottom"
 					overlay={
 						<Tooltip>
 							Questions will be taken from all difficulty levels,
-							or one chosen difficulty level.{" "}
+							or the selected difficulty level.{" "}
 						</Tooltip>
 					}
 				>
@@ -214,6 +370,7 @@ export default function StartScreen(props) {
 					</label>
 				</OverlayTrigger>
 				<select
+					className={fieldWidth}
 					name="trivia_difficulty"
 					value={difficulty}
 					onChange={handleDifficultyChange}
@@ -225,16 +382,66 @@ export default function StartScreen(props) {
 				</select>
 				<br />
 
-				<Button variant="primary" onClick={handleSubmit}>
-					Start a quiz
+				<Button
+					className="Button"
+					variant="primary"
+					onClick={handleSubmit}
+					style={{ margin: "10px" }}
+					size={buttonSize}
+				>
+					Start a Quiz
 				</Button>
-				<br />
 
-				<Button variant="danger" onClick={handleReset}>
-					Reset settings
+				<Button
+					className="Button"
+					variant="danger"
+					onClick={handleReset}
+					size={buttonSize}
+				>
+					Reset Quiz Settings
 				</Button>
 			</form>
-			<Disclaimer />
+			<div
+				id="quiz-history"
+				style={{
+					// display: "inline-block",
+					fontSize: sizeOfFont,
+					border: `${historyBorder}px solid deepskyblue`,
+					borderRadius: "5%",
+					position: "relative",
+					left: `${width - historyWidth - historyBorder}px`,
+					bottom: `${historyBottom}px`,
+					width: `${historyWidth}px`,
+				}}
+			>
+				<div
+					style={{
+						marginTop: "10px",
+						marginLeft: "10px",
+					}}
+				>
+					<p>
+						Past Quiz Scores: <br />
+					</p>
+					<ul>{scoreHistoryLi}</ul>
+					<div style={{ textAlign: "center" }}>
+						<Button
+							className="Button"
+							variant="primary"
+							onClick={handleClearHistory}
+							style={{ margin: "10px" }}
+							size={buttonSize}
+						>
+							clear
+						</Button>
+					</div>
+				</div>
+			</div>
+
+			<Disclaimer
+				sizeOfFont={sizeOfFont}
+				disclaimerVisibility={disclaimerVisibility}
+			/>
 		</div>
 	);
 }

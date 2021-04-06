@@ -1,12 +1,20 @@
 import React, { Component, useState, useEffect } from "react";
-import { Button, Alert } from "react-bootstrap";
+import {
+	Button,
+	Alert,
+	ProgressBar,
+	OverlayTrigger,
+	Tooltip,
+} from "react-bootstrap";
 import { BsQuestionCircle } from "react-icons/bs";
 
 function Question(props) {
 	const [chosenAnswer, setChosenAnswer] = useState(""),
 		[showAlert, setShowAlert] = useState(false),
-		[alertText, setAlertText] = useState("Correct!"),
-		[alertType, setAlertType] = useState("success");
+		// [alertType, setAlertType] = useState("success"),
+		// [alertText, setAlertText] = useState("Correct!"),
+		[showSkip, setShowSkip] = useState(""),
+		[timeoutObject, setTimeoutObject] = useState({});
 
 	const {
 		category,
@@ -19,36 +27,66 @@ function Question(props) {
 		setCorrects,
 		currentQuestion,
 		setCurrentQuestion,
+		alertType,
+		setAlertType,
+		alertText,
+		setAlertText,
 		amount,
 		randomOrder,
 		alertTimeout,
 		sizeOfFont,
 		enableAlert,
+		buttonSize,
+		setButtonSize,
+		iconScale,
+		progressBarHeight,
+		hasCountDown,
+		countDown,
+		countDownSettingVisibility,
+		setCountDownSettingVisibility,
+		sizeOfFontLarge,
+		setSizeOfFontLarge,
+		width,
 	} = props;
 
-	const [buttonSize, setButtonSize] = useState("");
-	const [sizeOfFontLarge, setSizeOfFontLarge] = useState(sizeOfFont);
-	useEffect(() => {
-		let sizeOfFontNumber = parseFloat(sizeOfFont);
-		setSizeOfFontLarge(sizeOfFontNumber * 1.3 + "%");
-		if (sizeOfFontNumber == 100) setButtonSize("");
-		if (sizeOfFontNumber < 100) setButtonSize("sm");
-		if (sizeOfFontNumber > 100) setButtonSize("lg");
-	}, [sizeOfFont]);
+	//countDown in seconds; countDownCurrent in milliseconds
+	//countDownCurrent will be decreased over time
+	const [countDownCurrent, setCountDownCurrent] = useState(countDown * 1000),
+		[quizHasEnded, setQuizHasEnded] = useState(false);
 
-	// const [handleSubmit, setHandleSubmit] = useState(() => 1);
-	// useEffect(() => {
-	// 	if (enableAlert) setHandleSubmit(handleSubmitWithAlert);
-	// 	else setHandleSubmit(handleSubmitNoAlert);
-	// }, [enableAlert]);
+	useEffect(() => {
+		setCountDownCurrent(countDown * 1000);
+	}, [countDown, currentQuestion]);
+	useEffect(() => {
+		let timer;
+		// console.log("has count down in use effect is ", typeof hasCountDown);
+		if (hasCountDown !== "false" && !quizHasEnded) {
+			timer =
+				countDownCurrent > 0 &&
+				setInterval(
+					() => setCountDownCurrent(countDownCurrent - 100),
+					100
+				);
+			// console.log("countdown: ", timer);
+			if (timer === false) {
+				if (enableAlert) {
+					handleSubmitWithAlert();
+				}
+				if (!enableAlert) {
+					handleSubmitNoAlert();
+				}
+			}
+		}
+		return () => clearInterval(timer);
+	}, [countDownCurrent, hasCountDown]);
 
 	if (props === []) {
 		//loading not complete
 		return <h4>Loading...</h4>;
 	}
-	
+
 	//formatting input
-	let question_formatted = question.replace(/&quot;/g, '"');
+	let question_formatted = question.replace(/&quot;|&ldquo;|&rdquo;/g, '"');
 	question_formatted = question_formatted.replace(/&#039;/g, "'");
 	question_formatted = question_formatted.replace(/&amp;/g, "&");
 	question_formatted = question_formatted.replace(/&minus;/g, "-");
@@ -56,7 +94,10 @@ function Question(props) {
 	question_formatted = question_formatted.replace(/&lt;/g, "<");
 	question_formatted = question_formatted.replace(/&gr;/g, ">");
 
-	let correct_answer_formatted = correct_answer.replace(/&quot;/g, '"');
+	let correct_answer_formatted = correct_answer.replace(
+		/&quot;|&ldquo;|&rdquo;/g,
+		'"'
+	);
 	correct_answer_formatted = correct_answer_formatted.replace(/&#039;/g, "'");
 	correct_answer_formatted = correct_answer_formatted.replace(/&amp;/g, "&");
 
@@ -64,7 +105,7 @@ function Question(props) {
 		answer.replace(/&#039;/g, "'")
 	);
 	incorrect_answers_formatted = incorrect_answers_formatted.map((answer) =>
-		answer.replace(/&quot;/g, '"')
+		answer.replace(/&quot;|&ldquo;|&rdquo;/g, '"')
 	);
 	incorrect_answers_formatted = incorrect_answers_formatted.map((answer) =>
 		answer.replace(/&amp;/g, "&")
@@ -80,6 +121,7 @@ function Question(props) {
 			return (
 				<div id="answer-buttons">
 					<Button
+						className="Button"
 						variant="outline-primary"
 						size={buttonSize}
 						value="True"
@@ -88,6 +130,7 @@ function Question(props) {
 						True
 					</Button>{" "}
 					<Button
+						className="Button"
 						variant="outline-primary"
 						size={buttonSize}
 						value="False"
@@ -108,8 +151,9 @@ function Question(props) {
 		//console.log("answers ", answers);
 
 		return (
-			<div id="answer-buttons">
+			<div style={{ margin: "20px" }}>
 				<Button
+					className="Button"
 					variant="outline-primary button-answer"
 					size={buttonSize}
 					onClick={handleAnswer}
@@ -118,6 +162,7 @@ function Question(props) {
 					A: {answers[0]}
 				</Button>{" "}
 				<Button
+					className="Button"
 					variant="outline-primary"
 					size={buttonSize}
 					onClick={handleAnswer}
@@ -126,6 +171,7 @@ function Question(props) {
 					B: {answers[1]}
 				</Button>{" "}
 				<Button
+					className="Button"
 					variant="outline-primary"
 					size={buttonSize}
 					onClick={handleAnswer}
@@ -134,6 +180,7 @@ function Question(props) {
 					C: {answers[2]}
 				</Button>{" "}
 				<Button
+					className="Button"
 					variant="outline-primary"
 					size={buttonSize}
 					onClick={handleAnswer}
@@ -146,9 +193,10 @@ function Question(props) {
 	}
 
 	function handleSubmitWithAlert() {
+		clearTimeout(timeoutObject); //cancel alert timeout from previous question
 		if (chosenAnswer === correct_answer_formatted) {
 			setAlertType("success");
-			incrementCorrects();
+			setCorrects(corrects + 1);
 			setAlertText("Correct!");
 		} else {
 			setAlertText(
@@ -157,44 +205,50 @@ function Question(props) {
 			setAlertType("warning");
 		}
 		setShowAlert(true);
-		incrementCurrentQuestion();
+		setCurrentQuestion(currentQuestion + 1);
 		setChosenAnswer("");
-		setTimeout(() => {
-			setShowAlert(false);
-		}, alertTimeout*1000);
+		setTimeoutObject(
+			setTimeout(() => {
+				setShowAlert(false);
+			}, alertTimeout * 1000)
+		);
 	}
 
 	function handleSubmitNoAlert() {
-		if (chosenAnswer === correct_answer_formatted) {
-			incrementCorrects();
+		if (currentQuestion > amount) {
+			// this is here to prevent handleSubmit from running when mainScreen has unmounted.
 		} else {
+			if (chosenAnswer === correct_answer_formatted) {
+				setCorrects(corrects + 1);
+			} else {
+			}
+			setCurrentQuestion(currentQuestion + 1);
+			setChosenAnswer("");
 		}
-		incrementCurrentQuestion();
-		setChosenAnswer("");
 	}
 
 	function generateSubmit() {
+		let handleSubmit = handleSubmitWithAlert;
+		if (enableAlert == "true") {
+			handleSubmit = handleSubmitWithAlert;
+		}
+		if (enableAlert == "false") {
+			handleSubmit = handleSubmitNoAlert;
+		}
+		// console.log("(generate submit) enable alert is ", enableAlert);
+		// console.log("(generate submit) handle submit is ", handleSubmit);
+
 		if (chosenAnswer == "") {
 			return <React.Fragment></React.Fragment>;
 		}
-		let enablealerttype = typeof enableAlert;
-		console.log(
-			"enable alert is ",
-			enableAlert,
-			" of type ",
-			enablealerttype
-		);
 		return (
 			<React.Fragment>
 				<Button
+					className="Button"
 					variant="primary"
 					value="Submit"
 					size={buttonSize}
-					onClick={
-						(enableAlert === "true")
-							? handleSubmitWithAlert
-							: handleSubmitNoAlert
-					}
+					onClick={handleSubmit}
 				>
 					Submit
 				</Button>{" "}
@@ -207,13 +261,6 @@ function Question(props) {
 		//console.log("Chosen answer: ", e.target.value);
 	}
 
-	function incrementCorrects() {
-		setCorrects(corrects + 1);
-	}
-	function incrementCurrentQuestion() {
-		setCurrentQuestion(currentQuestion + 1);
-	}
-
 	return (
 		<div>
 			<Alert
@@ -223,13 +270,48 @@ function Question(props) {
 			>
 				{alertText}
 			</Alert>
-			<h3 style={{ fontSize: sizeOfFontLarge }}>
-				<BsQuestionCircle color="blue" /> {question_formatted}
-			</h3>
-			<hr></hr>
-			{generateAnswers()}
-			<br></br>
-			{generateSubmit()}
+			<div
+				id="Question-and-answers"
+				style={{
+					textAlign: "center",
+				}}
+			>
+				<h3 style={{ fontSize: sizeOfFontLarge }}>
+					<OverlayTrigger
+						placement="bottom"
+						overlay={
+							<Tooltip style={{ fontSize: sizeOfFont }}>
+								Question {currentQuestion} of {amount} <br />{" "}
+								Category: {category} <br /> Difficulty:{" "}
+								{difficulty}
+							</Tooltip>
+						}
+					>
+						<BsQuestionCircle
+							style={{ padding: "6px" }}
+							size={`${35 * iconScale}`}
+							color="deepskyblue"
+						/>
+					</OverlayTrigger>{" "}
+					{question_formatted}
+				</h3>
+				<hr></hr>
+				<div style={{ display: countDownSettingVisibility }}>
+					<ProgressBar
+						style={{
+							fontSize: sizeOfFont,
+							height: progressBarHeight,
+							margin: "5px 500px 10px 500px",
+						}}
+						now={(countDownCurrent / (countDown * 1000)) * 100}
+						label={`${countDownCurrent / 1000} sec`}
+					/>
+				</div>
+
+				{generateAnswers()}
+				<br></br>
+				{generateSubmit()}
+			</div>
 		</div>
 	);
 }

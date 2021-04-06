@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import Question from "./Question";
 import Disclaimer from "./Disclaimer";
 import Setting from "./Setting";
-import "./MainScreen.css";
 import axios from "axios";
 import { BsGear } from "react-icons/bs";
-import { RiHome2Line } from "react-icons/ri";
+import { RiHome2Line, RiCloseCircleLine } from "react-icons/ri";
 import {
 	Button,
 	ProgressBar,
@@ -14,6 +13,7 @@ import {
 	Alert,
 	Navbar,
 } from "react-bootstrap";
+import { icons } from "react-icons/lib";
 
 export default function MainScreen(props) {
 	const {
@@ -25,11 +25,38 @@ export default function MainScreen(props) {
 		setCorrects,
 		currentQuestion,
 		setCurrentQuestion,
+		alertType,
+		setAlertType,
+		alertText,
+		setAlertText,
 		sizeOfFont,
 		setSizeOfFont,
 		enableAlert,
 		setEnableAlert,
-		width
+		alertTimeout,
+		setAlertTimeout,
+		handleFontChange,
+		handleAlertChange,
+		handleAlertTimeoutChange,
+		timeoutSettingVisibility,
+		setTimeoutSettingVisibility,
+		buttonSize,
+		setButtonSize,
+		sizeOfFontLarge,
+		setSizeOfFontLarge,
+		hasCountDown,
+		setHasCountDown,
+		countDown,
+		setCountDown,
+		handleCountDownChange,
+		handleCountDownTimeChange,
+		countDownSettingVisibility,
+		setCountDownSettingVisibility,
+		iconScale,
+		width,
+		disclaimerVisibility,
+		setDisclaimerVisibility,
+		handleDisclaimerVisibilityChange,
 	} = props;
 
 	//response contains the quiz JSON from the site.
@@ -48,15 +75,9 @@ export default function MainScreen(props) {
 				type: "multiple",
 			},
 		]),
-		[alertTimeout, setAlertTimeout] = useState(3),
 		[showSetting, setShowSetting] = useState(false),
 		[randomOrder, setRandomOrder] = useState([]),
-		[progressBarHeight, setProgressBarHeight] = useState(20),
-		[timeoutSettingVisibility, setTimeoutSettingVisibility] = useState(
-			"inline"
-		);
-
-
+		[progressBarHeight, setProgressBarHeight] = useState(20);
 
 	useEffect(() => {
 		document.title = `Question ${currentQuestion} - My-Quiz-App`;
@@ -68,7 +89,7 @@ export default function MainScreen(props) {
 			.then((res) => {
 				const results = res.data.results;
 				if (results !== response) setResponse(results);
-				console.log("reference to response", response);
+				// console.log("reference to response", response);
 			})
 			.catch((err) => console.log("error: ", err));
 	}, []);
@@ -83,6 +104,17 @@ export default function MainScreen(props) {
 			//console.log("visibility is now none.");
 		}
 	}, [enableAlert]);
+
+	useEffect(() => {
+		if (hasCountDown == "true") {
+			setCountDownSettingVisibility("inline");
+			//console.log("visibility is now inline.");
+		}
+		if (hasCountDown == "false") {
+			setCountDownSettingVisibility("none");
+			//console.log("visibility is now none.");
+		}
+	}, [hasCountDown]);
 
 	/**
 	 *
@@ -106,6 +138,8 @@ export default function MainScreen(props) {
 
 	function handleHome() {
 		setQuizURL("");
+		setCurrentQuestion(1);
+		setCorrects(0);
 	}
 
 	useEffect(() => {
@@ -117,24 +151,6 @@ export default function MainScreen(props) {
 		setShowSetting(!showSetting);
 	}
 
-	function handleFontChange(e) {
-		setSizeOfFont(e.target.value);
-		//console.log("size of font: ", sizeOfFont);
-	}
-
-
-
-	function handleAlertChange(e) {
-		setEnableAlert(e.target.value);
-		console.log("handle enable alert: ", typeof e.target.value);
-	}
-
-
-	function handleAlertTimeoutChange(e) {
-		setAlertTimeout(e.target.value);
-	}
-
-
 	return (
 		<div>
 			{/* navbar begins */}
@@ -143,11 +159,11 @@ export default function MainScreen(props) {
 					<img
 						alt=""
 						src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1920px-React-icon.svg.png"
-						width="44"
-						height="30"
+						width={`${40 * iconScale}`}
+						height={`${27 * iconScale}`}
 						className="d-inline-block align-top"
 					/>{" "}
-					My-Quiz-App
+					<span onClick={handleHome}>My-Quiz-App</span>
 				</Navbar.Brand>
 				<div
 					id="navbar-button-group"
@@ -164,7 +180,7 @@ export default function MainScreen(props) {
 						<BsGear
 							style={{ padding: "6px", paddingRight: "10px" }}
 							onClick={handleSetting}
-							size={42}
+							size={`${40 * iconScale}`}
 							color="white"
 						/>
 					</OverlayTrigger>
@@ -180,7 +196,7 @@ export default function MainScreen(props) {
 						<RiHome2Line
 							style={{ padding: "6px" }}
 							onClick={handleHome}
-							size={42}
+							size={`${40 * iconScale}`}
 							color="white"
 						/>
 					</OverlayTrigger>
@@ -190,6 +206,7 @@ export default function MainScreen(props) {
 			{/* Setting begins */}
 			<Setting
 				showSetting={showSetting}
+				handleSetting={handleSetting}
 				sizeOfFont={sizeOfFont}
 				handleFontChange={handleFontChange}
 				enableAlert={enableAlert}
@@ -197,6 +214,21 @@ export default function MainScreen(props) {
 				timeoutSettingVisibility={timeoutSettingVisibility}
 				alertTimeout={alertTimeout}
 				handleAlertTimeoutChange={handleAlertTimeoutChange}
+				hasCountDown={hasCountDown}
+				setHasCountDown={setHasCountDown}
+				countDown={countDown}
+				setCountDown={setCountDown}
+				handleCountDownChange={handleCountDownChange}
+				handleCountDownTimeChange={handleCountDownTimeChange}
+				countDownSettingVisibility={countDownSettingVisibility}
+				setCountDownSettingVisibility={setCountDownSettingVisibility}
+				iconScale={iconScale}
+				width={width}
+				disclaimerVisibility={disclaimerVisibility}
+				setDisclaimerVisibility={setDisclaimerVisibility}
+				handleDisclaimerVisibilityChange={
+					handleDisclaimerVisibilityChange
+				}
 			/>
 			{/* Setting ends */}
 			<ProgressBar
@@ -204,8 +236,8 @@ export default function MainScreen(props) {
 				now={(currentQuestion / amount) * 100}
 				label={`Question ${currentQuestion} of ${amount}`}
 			/>
-			<h6 style={{ fontSize: sizeOfFont }}>
-				category: {response[currentQuestion - 1].category} | difficulty:{" "}
+			<h6 style={{ fontSize: sizeOfFont, margin: "10px" }}>
+				Category: {response[currentQuestion - 1].category} | Difficulty:{" "}
 				{response[currentQuestion - 1].difficulty}
 			</h6>
 			<Question
@@ -221,14 +253,31 @@ export default function MainScreen(props) {
 				setCorrects={setCorrects}
 				currentQuestion={currentQuestion}
 				setCurrentQuestion={setCurrentQuestion}
+				alertType={alertType}
+				setAlertType={setAlertType}
+				alertText={alertText}
+				setAlertText={setAlertText}
 				amount={amount}
 				randomOrder={randomOrder}
 				alertTimeout={alertTimeout}
 				sizeOfFont={sizeOfFont}
 				enableAlert={enableAlert}
+				buttonSize={buttonSize}
+				setButtonSize={setButtonSize}
+				iconScale={iconScale}
+				hasCountDown={hasCountDown}
+				countDown={countDown}
+				countDownSettingVisibility={countDownSettingVisibility}
+				setCountDownSettingVisibility={setCountDownSettingVisibility}
+				sizeOfFontLarge={sizeOfFontLarge}
+				setSizeOfFontLarge={setSizeOfFontLarge}
 				width={width}
+				progressBarHeight={progressBarHeight}
 			/>
-			<Disclaimer />
+			<Disclaimer
+				sizeOfFont={sizeOfFont}
+				disclaimerVisibility={disclaimerVisibility}
+			/>
 		</div>
 	);
 }
