@@ -1,12 +1,5 @@
-import React, { Component, useEffect, useState } from "react";
-import {
-	Button,
-	ProgressBar,
-	OverlayTrigger,
-	Tooltip,
-	Alert,
-	Navbar,
-} from "react-bootstrap";
+import React, { useEffect, useState, useRef } from "react";
+import { OverlayTrigger, Tooltip, Alert } from "react-bootstrap";
 import { RiCloseCircleLine } from "react-icons/ri";
 
 export default function Setting(props) {
@@ -36,7 +29,15 @@ export default function Setting(props) {
 	} = props;
 
 	const [fieldWidth, setFieldWidth] = useState("medium-width-setting-field"),
-		[labelWidth, setLabelWidth] = useState("medium-width-setting-label");
+		[labelWidth, setLabelWidth] = useState("medium-width-setting-label"),
+		[hotkeyVisibility, setHotkeyVisibility] = useState("none");
+
+	const selectInput1 = useRef(),
+		selectInput2 = useRef(),
+		selectInput3 = useRef(),
+		selectInput4 = useRef(),
+		numberInput1 = useRef(),
+		numberInput2 = useRef();
 
 	useEffect(() => {
 		// console.log(sizeOfFont);
@@ -56,6 +57,11 @@ export default function Setting(props) {
 			// console.log("setting width now large");
 		}
 	}, [sizeOfFont]);
+
+	function handleRevealHotkey(e) {
+		if (hotkeyVisibility === "inline-block") setHotkeyVisibility("none");
+		if (hotkeyVisibility === "none") setHotkeyVisibility("inline-block");
+	}
 
 	return (
 		<Alert
@@ -84,12 +90,13 @@ export default function Setting(props) {
 				<form id="setting-form">
 					<OverlayTrigger
 						placement="bottom"
-						overlay={<Tooltip>Set the font size</Tooltip>}
+						overlay={<Tooltip>Set the font size.</Tooltip>}
 					>
 						<label
 							className={labelWidth}
 							id="setting-label"
 							htmlFor="font-size"
+							onClick={() => selectInput1.current.focus()}
 						>
 							Font Size
 						</label>
@@ -100,6 +107,7 @@ export default function Setting(props) {
 						name="font-size"
 						value={sizeOfFont}
 						onChange={handleFontChange}
+						ref={selectInput1}
 					>
 						<option value="80%">Small</option>
 						<option value="110%">Medium</option>
@@ -110,8 +118,8 @@ export default function Setting(props) {
 						placement="bottom"
 						overlay={
 							<Tooltip>
-								Set whether to show a notification for whether a
-								question was answered correctly
+								Set whether to display a notification for
+								if a question was answered correctly.
 							</Tooltip>
 						}
 					>
@@ -119,6 +127,7 @@ export default function Setting(props) {
 							className={labelWidth}
 							id="setting-label"
 							htmlFor="notify"
+							onClick={() => selectInput2.current.focus()}
 						>
 							Notification
 						</label>
@@ -129,6 +138,7 @@ export default function Setting(props) {
 						name="notify"
 						value={enableAlert}
 						onChange={handleAlertChange}
+						ref={selectInput2}
 					>
 						<option value={true}>On</option>
 						<option value={false}>Off</option>
@@ -138,12 +148,13 @@ export default function Setting(props) {
 						id="timeout-setting"
 						style={{ display: timeoutSettingVisibility }}
 					>
+						{/* <pre style={{display:"inline"}}>  &#9492;&#9472;</pre> */}
 						<OverlayTrigger
 							placement="bottom"
 							overlay={
 								<Tooltip>
 									Set the amount of time the notification is
-									visible for (unit in seconds)
+									visible for (unit in seconds).
 								</Tooltip>
 							}
 						>
@@ -151,6 +162,7 @@ export default function Setting(props) {
 								className={labelWidth}
 								id="setting-label"
 								htmlFor="notify-timeout"
+								onClick={() => numberInput1.current.focus()}
 							>
 								Notification Time
 							</label>
@@ -165,6 +177,7 @@ export default function Setting(props) {
 							max="9999"
 							value={alertTimeout}
 							onChange={handleAlertTimeoutChange}
+							ref={numberInput1}
 						/>
 						<br />
 					</div>
@@ -174,7 +187,7 @@ export default function Setting(props) {
 						overlay={
 							<Tooltip>
 								Set whether to have a limited time to answer
-								each question
+								each question.
 							</Tooltip>
 						}
 					>
@@ -182,6 +195,7 @@ export default function Setting(props) {
 							className={labelWidth}
 							id="setting-label"
 							htmlFor="countdown"
+							onClick={() => selectInput3.current.focus()}
 						>
 							Limited Time
 						</label>
@@ -192,6 +206,7 @@ export default function Setting(props) {
 						name="countdown"
 						value={hasCountDown}
 						onChange={handleCountDownChange}
+						ref={selectInput3}
 					>
 						<option value={true}>On</option>
 						<option value={false}>Off</option>
@@ -201,12 +216,13 @@ export default function Setting(props) {
 						id="countdown-setting"
 						style={{ display: countDownSettingVisibility }}
 					>
+						{/* <pre style={{display:"inline"}}>  &#9492;&#9472;</pre>				 */}
 						<OverlayTrigger
 							placement="bottom"
 							overlay={
 								<Tooltip>
 									Set the amount of time allotted for
-									answering each question (unit in seconds)
+									answering each question (unit in seconds).
 								</Tooltip>
 							}
 						>
@@ -214,6 +230,7 @@ export default function Setting(props) {
 								className={labelWidth}
 								id="setting-label"
 								htmlFor="countdown-timeout"
+								onClick={() => numberInput2.current.focus()}
 							>
 								Allotted Time
 							</label>
@@ -228,6 +245,7 @@ export default function Setting(props) {
 							max="9999"
 							value={countDown}
 							onChange={handleCountDownTimeChange}
+							ref={numberInput2}
 						/>
 						<br />
 					</div>
@@ -235,8 +253,7 @@ export default function Setting(props) {
 						placement="bottom"
 						overlay={
 							<Tooltip>
-								Set whether to display the footer containing
-								copyright information
+								Set the visibility of the footer.
 							</Tooltip>
 						}
 					>
@@ -244,6 +261,7 @@ export default function Setting(props) {
 							className={labelWidth}
 							id="setting-label"
 							htmlFor="disclaimer-visibility"
+							onClick={() => selectInput4.current.focus()}
 						>
 							Footer Visibility
 						</label>
@@ -254,11 +272,64 @@ export default function Setting(props) {
 						name="disclaimer-visibility"
 						value={disclaimerVisibility}
 						onChange={handleDisclaimerVisibilityChange}
+						ref={selectInput4}
 					>
 						<option value={"inline"}>On</option>
 						<option value={"none"}>Off</option>
 					</select>
 					<br />
+					<div style={{ verticalAlign: "middle" }}>
+						<OverlayTrigger
+							placement="bottom"
+							overlay={
+								<Tooltip>Click to reveal hotkeys.</Tooltip>
+							}
+						>
+							<label
+								style={{
+									display: "inline-block",
+									cursor: "pointer",
+									color: "#0077cc",
+									bottom: "50%",
+									position: "relative",
+								}}
+								className={labelWidth}
+								id="hotkeys"
+								htmlFor="hotkeys"
+								onClick={handleRevealHotkey}
+							>
+								Hotkeys
+							</label>
+						</OverlayTrigger>
+
+						<ul
+							style={{
+								paddingLeft: 0,
+								listStylePosition: "outside",
+								listStyleType: "none",
+								display: hotkeyVisibility,
+							}}
+						>
+							<li className="hotkey-item">
+								<span className="code">space</span> and{" "}
+								<span className="code">enter</span>: begin quiz
+								/ submit question
+							</li>
+							<li className="hotkey-item">
+								<span className="code">esc</span> and{" "}
+								<span className="code">home</span>: reset quiz
+								criteria / return to starting screen{" "}
+							</li>
+							<li className="hotkey-item">
+								<span className="code">I</span>: open / close
+								settings
+							</li>
+							<li className="hotkey-item">
+								<span className="code">number 1-4</span>: select
+								1st through 4th answer
+							</li>
+						</ul>
+					</div>
 				</form>
 			</div>
 		</Alert>

@@ -1,38 +1,33 @@
-label {
-	padding: 5px;
+.code {
+	font-family: "Courier New", Courier, monospace;
+	background-color: #d6d0d0;
 }
 
-.Button {
-	padding: 10px;
-	border: 10px;
-	color: black;
-}
-
-div#narbar-button-group {
-	cursor: pointer;
-	position: fixed;
-	right: 0;
-	padding: 8px;
-}
-
-Gear {
+BsGear {
 	cursor: pointer;
 	padding: 8px;
 }
 
-footer#copyright-disclaimer {
+.react-icons {
+	cursor: pointer;
+	padding: 6px;
+	padding-right: 8px;
+}
+
+footer#disclaimer {
+	background-color: white;
 	text-align: center;
 	position: fixed;
 	left: 0;
-	bottom: 0;
 	right: 0;
-	z-index: -1;
-	vertical-align: bottom;
+	bottom: 0;
+	z-index: 2;
 }
 
 label {
-	margin-left: 10px;
-	margin-right: 10px;
+	/* margin-left: 10px;
+	margin-right: 10px; */
+	margin: 5px 10px 5px 10px;
 }
 
 select {
@@ -81,10 +76,20 @@ select {
 li {
 	margin: 10px;
 }
-
+.thumbs {
+	list-style-position: outside;
+	padding-left: 4px;
+	position: relative;
+	right: 10px;
+}
 .thumb-up {
 	list-style-type: "\1F44D";
 }
 .thumb-down {
 	list-style-type: "\1F44E";
 }
+
+/* li.hotkey-item {
+	list-style-position: outside;
+	list-style-type: none;
+} */

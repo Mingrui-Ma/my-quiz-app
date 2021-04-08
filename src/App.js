@@ -18,6 +18,7 @@ function App() {
 			"inline"
 		),
 		[width, setWidth] = useState(window.innerWidth),
+		[height, setHeight] = useState(window.innerHeight),
 		[buttonSize, setButtonSize] = useState(""),
 		[hasCountDown, setHasCountDown] = useState(true),
 		[countDown, setCountDown] = useState(10),
@@ -30,7 +31,10 @@ function App() {
 		[disclaimerVisibility, setDisclaimerVisibility] = useState("inline");
 
 	useEffect(() => {
-		const handleResize = () => setWidth(window.innerWidth);
+		const handleResize = () => {
+			setWidth(window.innerWidth);
+			setHeight(window.innerHeight);
+		};
 		window.addEventListener("resize", handleResize);
 		return () => {
 			window.removeEventListener("resize", handleResize);
@@ -113,6 +117,7 @@ function App() {
 				setSizeOfFontLarge={setSizeOfFontLarge}
 				iconScale={iconScale}
 				width={width}
+				height={height}
 				scoreHistory={scoreHistory}
 				setScoreHistory={setScoreHistory}
 				disclaimerVisibility={disclaimerVisibility}
@@ -189,6 +194,22 @@ function App() {
 			width={width}
 			scoreHistory={scoreHistory}
 			setScoreHistory={setScoreHistory}
+			handleFontChange={handleFontChange}
+			enableAlert={enableAlert}
+			handleAlertChange={handleAlertChange}
+			timeoutSettingVisibility={timeoutSettingVisibility}
+			handleAlertTimeoutChange={handleAlertTimeoutChange}
+			hasCountDown={hasCountDown}
+			setHasCountDown={setHasCountDown}
+			countDown={countDown}
+			setCountDown={setCountDown}
+			handleCountDownChange={handleCountDownChange}
+			handleCountDownTimeChange={handleCountDownTimeChange}
+			countDownSettingVisibility={countDownSettingVisibility}
+			setCountDownSettingVisibility={setCountDownSettingVisibility}
+			disclaimerVisibility={disclaimerVisibility}
+			setDisclaimerVisibility={setDisclaimerVisibility}
+			handleDisclaimerVisibilityChange={handleDisclaimerVisibilityChange}
 		/>
 	);
 }

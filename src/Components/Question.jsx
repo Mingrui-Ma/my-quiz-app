@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
 	Button,
 	Alert,
@@ -11,9 +11,6 @@ import { BsQuestionCircle } from "react-icons/bs";
 function Question(props) {
 	const [chosenAnswer, setChosenAnswer] = useState(""),
 		[showAlert, setShowAlert] = useState(false),
-		// [alertType, setAlertType] = useState("success"),
-		// [alertText, setAlertText] = useState("Correct!"),
-		[showSkip, setShowSkip] = useState(""),
 		[timeoutObject, setTimeoutObject] = useState({});
 
 	const {
@@ -47,6 +44,8 @@ function Question(props) {
 		sizeOfFontLarge,
 		setSizeOfFontLarge,
 		width,
+		handleHome,
+		handleSetting,
 	} = props;
 
 	//countDown in seconds; countDownCurrent in milliseconds
@@ -54,9 +53,15 @@ function Question(props) {
 	const [countDownCurrent, setCountDownCurrent] = useState(countDown * 1000),
 		[quizHasEnded, setQuizHasEnded] = useState(false);
 
+	const answer1 = useRef(),
+		answer2 = useRef(),
+		answer3 = useRef(),
+		answer4 = useRef();
+
 	useEffect(() => {
 		setCountDownCurrent(countDown * 1000);
 	}, [countDown, currentQuestion]);
+
 	useEffect(() => {
 		let timer;
 		// console.log("has count down in use effect is ", typeof hasCountDown);
@@ -80,11 +85,60 @@ function Question(props) {
 		return () => clearInterval(timer);
 	}, [countDownCurrent, hasCountDown]);
 
+	useEffect(() => {
+		function handleKeyDown(e) {
+			// console.log(`Updated. current question: ${currentQuestion}`);
+			if (e.code === "Digit1" || e.code === "Numpad1") {
+				answer1.current.focus();
+				setChosenAnswer(answers[0]);
+				console.log("set chosen answer: ", answers[0]);
+			}
+			if (e.code === "Digit2" || e.code === "Numpad2") {
+				answer2.current.focus();
+				setChosenAnswer(answers[1]);
+				console.log("set chosen answer: ", answers[1]);
+			}
+			if (e.code === "Digit3" || e.code === "Numpad3") {
+				if (answers.length > 2) {
+					answer3.current.focus();
+					setChosenAnswer(answers[2]);
+				}
+			}
+			if (e.code === "Digit4" || e.code === "Numpad4") {
+				if (answers.length > 2) {
+					answer4.current.focus();
+					setChosenAnswer(answers[3]);
+				}
+			}
+			if (
+				e.code === "Space" ||
+				e.code === "Enter" ||
+				e.code === "NumpadEnter"
+			) {
+				if (enableAlert || enableAlert === "true") {
+					handleSubmitWithAlert();
+				}
+				if (!enableAlert || enableAlert === "false") {
+					handleSubmitNoAlert();
+				}
+			}
+			if (e.code === "Escape" || e.code === "Home") {
+				handleHome();
+			}
+			if (e.code === "KeyI") handleSetting();
+		}
+		// console.log("handle key down reference: ", handleKeyDown);
+		window.addEventListener("keydown", handleKeyDown);
+
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	});
+
 	if (props === []) {
 		//loading not complete
 		return <h4>Loading...</h4>;
 	}
 
+	let answers = [];
 	//formatting input
 	let question_formatted = question.replace(/&quot;|&ldquo;|&rdquo;/g, '"');
 	question_formatted = question_formatted.replace(/&#039;/g, "'");
@@ -118,6 +172,7 @@ function Question(props) {
 	function generateAnswers() {
 		if (type === "boolean") {
 			//true/false question
+			answers = ["True", "False"];
 			return (
 				<div id="answer-buttons">
 					<Button
@@ -126,6 +181,7 @@ function Question(props) {
 						size={buttonSize}
 						value="True"
 						onClick={handleAnswer}
+						ref={answer1}
 					>
 						True
 					</Button>{" "}
@@ -135,6 +191,7 @@ function Question(props) {
 						size={buttonSize}
 						value="False"
 						onClick={handleAnswer}
+						ref={answer2}
 					>
 						False
 					</Button>{" "}
@@ -143,7 +200,7 @@ function Question(props) {
 		}
 
 		//multiple choise question
-		let answers = [];
+		answers = [];
 		answers[randomOrder.indexOf(4)] = correct_answer_formatted;
 		answers[randomOrder.indexOf(3)] = incorrect_answers_formatted[0];
 		answers[randomOrder.indexOf(2)] = incorrect_answers_formatted[1];
@@ -158,6 +215,7 @@ function Question(props) {
 					size={buttonSize}
 					onClick={handleAnswer}
 					value={answers[0]}
+					ref={answer1}
 				>
 					A: {answers[0]}
 				</Button>{" "}
@@ -167,6 +225,7 @@ function Question(props) {
 					size={buttonSize}
 					onClick={handleAnswer}
 					value={answers[1]}
+					ref={answer2}
 				>
 					B: {answers[1]}
 				</Button>{" "}
@@ -176,6 +235,7 @@ function Question(props) {
 					size={buttonSize}
 					onClick={handleAnswer}
 					value={answers[2]}
+					ref={answer3}
 				>
 					C: {answers[2]}
 				</Button>{" "}
@@ -185,6 +245,7 @@ function Question(props) {
 					size={buttonSize}
 					onClick={handleAnswer}
 					value={answers[3]}
+					ref={answer4}
 				>
 					D: {answers[3]}
 				</Button>{" "}

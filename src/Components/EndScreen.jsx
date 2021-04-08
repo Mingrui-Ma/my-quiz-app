@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import TopBanner from "./TopBanner";
-import setting from "./Setting";
+import { BsGear } from "react-icons/bs";
+import { RiHome2Line } from "react-icons/ri";
+import Setting from "./Setting";
 import {
 	Button,
 	OverlayTrigger,
@@ -25,26 +26,63 @@ function EndScreen(props) {
 		sizeOfFontLarge,
 		buttonSize,
 		iconScale,
-		handleSetting,
 		scoreHistory,
 		setScoreHistory,
+		handleFontChange,
+		enableAlert,
+		handleAlertChange,
+		timeoutSettingVisibility,
+		handleAlertTimeoutChange,
+		hasCountDown,
+		setHasCountDown,
+		countDown,
+		setCountDown,
+		handleCountDownChange,
+		handleCountDownTimeChange,
+		countDownSettingVisibility,
+		setCountDownSettingVisibility,
+		width,
+		disclaimerVisibility,
+		setDisclaimerVisibility,
+		handleDisclaimerVisibilityChange,
 	} = props;
 
-	const [showAlert, setShowAlert] = useState(true);
+	const [showSetting, setShowSetting] = useState(false),
+		[showAlert, setShowAlert] = useState(true);
 
 	useEffect(() => {
+		//doc title
 		document.title = `End of Quiz - Your Score is ${calcPercentage(
 			corrects,
 			amount
 		)}`;
 
+		//notification from last question
 		setTimeout(() => setShowAlert(false), alertTimeout * 1000);
 
+		//append score history
 		let scoreHistoryAr = scoreHistory;
 		scoreHistoryAr.push(calcPercentage(corrects, amount));
 		setScoreHistory(scoreHistoryAr);
 	}, []);
 
+	useEffect(() => {
+		function handleKeyDown(e) {
+			if (e.code === "Escape" || e.code === "Home") {
+				handleReturn();
+			}
+			if (e.code === "KeyI") handleSetting();
+		}
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	});
+
+	/**
+	 * Calculate a divided by b as a percentage, keeping 4 significant digits.
+	 * @param {number} a The dividend
+	 * @param {number} b The divisor
+	 * @returns the percentage as a string.
+	 */
 	function calcPercentage(a, b) {
 		let num = (a / b) * 100,
 			numSigDig = Number.parseFloat(num).toPrecision(4),
@@ -64,6 +102,10 @@ function EndScreen(props) {
 		setCurrentQuestion(1);
 	}
 
+	function handleSetting() {
+		setShowSetting(!showSetting);
+	}
+
 	return (
 		<div>
 			<Navbar bg="dark" variant="dark">
@@ -71,18 +113,78 @@ function EndScreen(props) {
 					<img
 						alt=""
 						src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1920px-React-icon.svg.png"
-						width={`${40 * iconScale}`}
-						height={`${27 * iconScale}`}
+						style={{ verticalAlign: "middle" }}
+						width={`${45 * iconScale}`}
+						height={`${31 * iconScale}`}
 						className="d-inline-block align-top"
 					/>{" "}
 					<span
 						onClick={handleReturn}
-						style={{ fontSize: sizeOfFont }}
+						style={{ fontFamily: "Georgia", fontSize: sizeOfFont }}
 					>
 						My-Quiz-App
 					</span>
 				</Navbar.Brand>
+				<div
+					id="navbar-button-group"
+					style={{
+						cursor: "pointer",
+						position: "fixed",
+						right: "10px",
+					}}
+				>
+					<OverlayTrigger
+						placement="bottom"
+						overlay={<Tooltip>Settings</Tooltip>}
+					>
+						<BsGear
+							style={{ padding: "6px", paddingRight: "10px" }}
+							onClick={handleSetting}
+							size={`${40 * iconScale}`}
+							color="white"
+						/>
+					</OverlayTrigger>
+					<OverlayTrigger
+						placement="bottom"
+						overlay={
+							<Tooltip>Return to the starting screen.</Tooltip>
+						}
+					>
+						<RiHome2Line
+							style={{ padding: "6px" }}
+							onClick={handleReturn}
+							size={`${40 * iconScale}`}
+							color="white"
+						/>
+					</OverlayTrigger>
+				</div>
 			</Navbar>
+			<Setting
+				showSetting={showSetting}
+				handleSetting={handleSetting}
+				sizeOfFont={sizeOfFont}
+				handleFontChange={handleFontChange}
+				enableAlert={enableAlert}
+				handleAlertChange={handleAlertChange}
+				timeoutSettingVisibility={timeoutSettingVisibility}
+				alertTimeout={alertTimeout}
+				handleAlertTimeoutChange={handleAlertTimeoutChange}
+				hasCountDown={hasCountDown}
+				setHasCountDown={setHasCountDown}
+				countDown={countDown}
+				setCountDown={setCountDown}
+				handleCountDownChange={handleCountDownChange}
+				handleCountDownTimeChange={handleCountDownTimeChange}
+				countDownSettingVisibility={countDownSettingVisibility}
+				setCountDownSettingVisibility={setCountDownSettingVisibility}
+				iconScale={iconScale}
+				width={width}
+				disclaimerVisibility={disclaimerVisibility}
+				setDisclaimerVisibility={setDisclaimerVisibility}
+				handleDisclaimerVisibilityChange={
+					handleDisclaimerVisibilityChange
+				}
+			/>
 			<Alert
 				show={showAlert}
 				variant={alertType}

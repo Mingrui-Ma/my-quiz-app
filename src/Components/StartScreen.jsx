@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Disclaimer from "./Disclaimer";
 import Setting from "./Setting";
-import TopBanner from "./TopBanner";
 import { BsGear } from "react-icons/bs";
 import { Button, OverlayTrigger, Tooltip, Navbar } from "react-bootstrap";
 
@@ -36,6 +35,7 @@ export default function StartScreen(props) {
 		setCountDownSettingVisibility,
 		iconScale,
 		width,
+		height,
 		scoreHistory,
 		setScoreHistory,
 		disclaimerVisibility,
@@ -57,11 +57,35 @@ export default function StartScreen(props) {
 		),
 		[historyWidth, setHistoryWidth] = useState(160),
 		[historyBottom, setHistoryBottom] = useState(220),
-		[historyBorder, setHistoryBorder] = useState(3);
+		[historyBorder, setHistoryBorder] = useState(3),
+		[navbarBrandWidth, setNavbarBrandWidth] = useState(306);
+
+	const navbarEl = useRef(),
+		numInput = useRef(),
+		selectInput1 = useRef(),
+		selectInput2 = useRef();
 
 	useEffect(() => {
 		document.title = "Welcome to My-Quiz-App";
+
+		numInput.current.focus();
 	}, []);
+
+	useEffect(() => {
+		function handleKeyDown(e) {
+			console.log(`key code: ${e.code}`);
+			if (
+				e.code === "Enter" ||
+				e.code === "Space" ||
+				e.code === "NumpadEnter"
+			)
+				handleGenerateURL();
+			if (e.code === "Escape" || e.code === "Home") handleResetURL();
+			if (e.code === "KeyI") handleSetting();
+		}
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	});
 
 	useEffect(() => {
 		// console.log(sizeOfFont);
@@ -89,14 +113,16 @@ export default function StartScreen(props) {
 			setHistoryBorder(4);
 			// console.log("setting width now large");
 		}
+
+		setNavbarBrandWidth(navbarEl.current.offsetWidth);
 	}, [sizeOfFont]);
 
 	useEffect(() => {
-		if (enableAlert == "true") {
+		if (enableAlert === "true") {
 			setTimeoutSettingVisibility("inline");
 			//console.log("visibility is now inline.");
 		}
-		if (enableAlert == "false") {
+		if (enableAlert === "false") {
 			setTimeoutSettingVisibility("none");
 			//console.log("visibility is now none.");
 		}
@@ -128,7 +154,7 @@ export default function StartScreen(props) {
 	}
 
 	let url = "https://opentdb.com/api.php?amount=";
-	function handleSubmit() {
+	function handleGenerateURL() {
 		url += amount;
 		if (category !== "any") {
 			url += "&category=";
@@ -142,7 +168,7 @@ export default function StartScreen(props) {
 		setQuizURL(url);
 	}
 
-	function handleReset() {
+	function handleResetURL() {
 		setAmount(10);
 		setCategory("any");
 		setDifficulty("any");
@@ -152,19 +178,23 @@ export default function StartScreen(props) {
 		setShowSetting(!showSetting);
 	}
 
+	/**
+	 * Wrap scoreHistory items in li tag so that JSX can display it.
+	 * @returns array
+	 */
 	function listHistoryLi() {
 		// console.log(scoreHistory);
 		const items = [];
 		for (let [idx, val] of scoreHistory.entries()) {
 			if (parseFloat(val) >= 50)
 				items.push(
-					<li className="thumb-up" key={idx}>
+					<li className="thumbs thumb-up" key={idx}>
 						{val}
 					</li>
 				);
 			else
 				items.push(
-					<li className="thumb-down" key={idx}>
+					<li className="thumbs thumb-down" key={idx}>
 						{val}
 					</li>
 				);
@@ -179,13 +209,14 @@ export default function StartScreen(props) {
 	return (
 		<div>
 			<Navbar bg="dark" variant="dark">
-				<Navbar.Brand href="#home">
+				<Navbar.Brand href="#home" ref={navbarEl}>
 					<img
 						alt=""
 						src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1920px-React-icon.svg.png"
-						width={`${40 * iconScale}`}
-						height={`${27 * iconScale}`}
-						className="d-inline-block align-top"
+						style={{ verticalAlign: "middle" }}
+						width={`${45 * iconScale}`}
+						height={`${31 * iconScale}`}
+						// className="d-inline-block align-top"
 					/>{" "}
 					<OverlayTrigger
 						placement="bottom"
@@ -196,25 +227,25 @@ export default function StartScreen(props) {
 							</Tooltip>
 						}
 					>
-						<span style={{ fontSize: sizeOfFont }}>
+						<span
+							style={{
+								fontFamily: "Georgia",
+								fontSize: sizeOfFont,
+							}}
+						>
 							Welcome to My-Quiz-App!
 						</span>
 					</OverlayTrigger>
 				</Navbar.Brand>
 				<div
-					id="navbar-button-group"
-					style={{
-						cursor: "pointer",
-						position: "fixed",
-						right: "10px",
-					}}
+					style={{ position: "absolute", right: "8px" }}
 				>
 					<OverlayTrigger
 						placement="bottom"
 						overlay={<Tooltip>Settings</Tooltip>}
 					>
 						<BsGear
-							style={{ padding: "6px", paddingRight: "10px" }}
+							className="react-icons"
 							onClick={handleSetting}
 							size={`${40 * iconScale}`}
 							color="white"
@@ -222,11 +253,6 @@ export default function StartScreen(props) {
 					</OverlayTrigger>
 				</div>
 			</Navbar>
-			{/* <TopBanner 
-			        iconScale={iconScale}
-					sizeOfFont={sizeOfFont}
-					handleSetting={handleSetting}
-			/> */}
 			<Setting
 				showSetting={showSetting}
 				handleSetting={handleSetting}
@@ -252,29 +278,33 @@ export default function StartScreen(props) {
 					handleDisclaimerVisibilityChange
 				}
 			/>
-			<OverlayTrigger
-				placement="bottom"
-				overlay={
-					<Tooltip>
-						Quiz questions will be randomly selected from the Open
-						Trivia DB, with the criteria declared below.
-					</Tooltip>
-				}
-			>
-				<h1
-					style={{
-						textAlign: "center",
-						marginTop: "10px",
-						fontSize: sizeOfFontLarge,
-					}}
-				>
-					{/* width: {width} <br /> */}
-					Customize Quiz
-				</h1>
-			</OverlayTrigger>
+
 			{/* <p>
-					1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />1<br />
-				</p> */}
+				Helvetica is perhaps the most famous font of all time, <br />{" "}
+				and definitely one of the only fonts to have its own dedicated
+				documentary. <br /> It’s a modern sans serif font, inspired by
+				other modern Swiss and German fonts from the late 19th and early
+				20th centuries. Rather than a soft, rounded, and warm design,
+				<br /> it’s balanced and focused on clean lines and shapes.{" "}
+				<br />
+				This makes it one of the few fonts suitable for both body copy
+				and headlines. <br />
+				All Apple devices include Helvetica fonts, while Microsoft
+				defaults to Arial, its MS equivalent.
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+			</p> */}
 			<form
 				style={{
 					textAlign: "center",
@@ -287,11 +317,36 @@ export default function StartScreen(props) {
 					placement="bottom"
 					overlay={
 						<Tooltip>
+							Quiz questions will be randomly selected from the
+							Open Trivia DB, with the criteria declared below.
+						</Tooltip>
+					}
+				>
+					<h1
+						style={{
+							marginBottom: "10px",
+							fontSize: sizeOfFontLarge,
+						}}
+					>
+						{/* width: {width} <br />
+						navbar brand width: {navbarBrandWidth} <br /> */}
+						Customize Quiz
+					</h1>
+				</OverlayTrigger>
+				<OverlayTrigger
+					placement="bottom"
+					overlay={
+						<Tooltip>
 							Number of questions must be between 1 and 50.
 						</Tooltip>
 					}
 				>
-					<label htmlFor="trivia_amount">Number of Questions:</label>
+					<label
+						htmlFor="trivia_amount"
+						onClick={() => numInput.current.focus()}
+					>
+						Number of Questions:
+					</label>
 				</OverlayTrigger>
 				<input
 					className={fieldWidth}
@@ -302,6 +357,7 @@ export default function StartScreen(props) {
 					max="50"
 					value={amount}
 					onChange={handleAmountChange}
+					ref={numInput}
 				/>
 				<br />
 
@@ -314,13 +370,19 @@ export default function StartScreen(props) {
 						</Tooltip>
 					}
 				>
-					<label htmlFor="trivia_category">Select Category: </label>
+					<label
+						htmlFor="trivia_category"
+						onClick={() => selectInput1.current.focus()}
+					>
+						Select Category:{" "}
+					</label>
 				</OverlayTrigger>
 				<select
 					className={categoryWidth}
 					name="trivia_category"
 					value={category}
 					onChange={handleCategoryChange}
+					ref={selectInput1}
 				>
 					<option value="any">Any Category</option>
 					<option value="9">General Knowledge</option>
@@ -365,7 +427,10 @@ export default function StartScreen(props) {
 						</Tooltip>
 					}
 				>
-					<label htmlFor="trivia_difficulty">
+					<label
+						htmlFor="trivia_difficulty"
+						onClick={() => selectInput2.current.focus()}
+					>
 						Select Difficulty:{" "}
 					</label>
 				</OverlayTrigger>
@@ -374,6 +439,7 @@ export default function StartScreen(props) {
 					name="trivia_difficulty"
 					value={difficulty}
 					onChange={handleDifficultyChange}
+					ref={selectInput2}
 				>
 					<option value="any">Any Difficulty</option>
 					<option value="easy">Easy</option>
@@ -385,20 +451,20 @@ export default function StartScreen(props) {
 				<Button
 					className="Button"
 					variant="primary"
-					onClick={handleSubmit}
+					onClick={handleGenerateURL}
 					style={{ margin: "10px" }}
 					size={buttonSize}
 				>
-					Start a Quiz
+					Begin Quiz
 				</Button>
 
 				<Button
 					className="Button"
 					variant="danger"
-					onClick={handleReset}
+					onClick={handleResetURL}
 					size={buttonSize}
 				>
-					Reset Quiz Settings
+					Reset
 				</Button>
 			</form>
 			<div
@@ -416,15 +482,15 @@ export default function StartScreen(props) {
 			>
 				<div
 					style={{
-						marginTop: "10px",
-						marginLeft: "10px",
+						margin: "10px",
+						textAlign: "center",
 					}}
 				>
 					<p>
 						Past Quiz Scores: <br />
 					</p>
 					<ul>{scoreHistoryLi}</ul>
-					<div style={{ textAlign: "center" }}>
+					<div>
 						<Button
 							className="Button"
 							variant="primary"

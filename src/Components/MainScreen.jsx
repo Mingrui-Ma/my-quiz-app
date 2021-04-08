@@ -4,16 +4,8 @@ import Disclaimer from "./Disclaimer";
 import Setting from "./Setting";
 import axios from "axios";
 import { BsGear } from "react-icons/bs";
-import { RiHome2Line, RiCloseCircleLine } from "react-icons/ri";
-import {
-	Button,
-	ProgressBar,
-	OverlayTrigger,
-	Tooltip,
-	Alert,
-	Navbar,
-} from "react-bootstrap";
-import { icons } from "react-icons/lib";
+import { RiHome2Line } from "react-icons/ri";
+import { ProgressBar, OverlayTrigger, Tooltip, Navbar } from "react-bootstrap";
 
 export default function MainScreen(props) {
 	const {
@@ -116,8 +108,7 @@ export default function MainScreen(props) {
 		}
 	}, [hasCountDown]);
 
-	/**
-	 *
+	/*
 	 * Put [1,2,3,4] into a random order.
 	 */
 	useEffect(() => {
@@ -134,18 +125,16 @@ export default function MainScreen(props) {
 		//console.log("order: ", randomProxy);
 	}, [currentQuestion, quizURL]);
 
-	//end of hooks section
+	useEffect(() => {
+		let height = parseFloat(sizeOfFont);
+		setProgressBarHeight((height / 100) * 20);
+	}, [sizeOfFont]);
 
 	function handleHome() {
 		setQuizURL("");
 		setCurrentQuestion(1);
 		setCorrects(0);
 	}
-
-	useEffect(() => {
-		let height = parseFloat(sizeOfFont);
-		setProgressBarHeight((height / 100) * 20);
-	}, [sizeOfFont]);
 
 	function handleSetting() {
 		setShowSetting(!showSetting);
@@ -159,18 +148,22 @@ export default function MainScreen(props) {
 					<img
 						alt=""
 						src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1920px-React-icon.svg.png"
-						width={`${40 * iconScale}`}
-						height={`${27 * iconScale}`}
+						style={{ verticalAlign: "middle" }}
+						width={`${45 * iconScale}`}
+						height={`${31 * iconScale}`}
 						className="d-inline-block align-top"
 					/>{" "}
-					<span onClick={handleHome}>My-Quiz-App</span>
+					<span
+						style={{ fontFamily: "Georgia", fontSize: sizeOfFont }}
+						onClick={handleHome}
+					>
+						My-Quiz-App
+					</span>
 				</Navbar.Brand>
 				<div
-					id="navbar-button-group"
 					style={{
-						cursor: "pointer",
-						position: "fixed",
-						right: "10px",
+						position: "absolute",
+						right: "8px",
 					}}
 				>
 					<OverlayTrigger
@@ -178,7 +171,7 @@ export default function MainScreen(props) {
 						overlay={<Tooltip>Settings</Tooltip>}
 					>
 						<BsGear
-							style={{ padding: "6px", paddingRight: "10px" }}
+							className="react-icons"
 							onClick={handleSetting}
 							size={`${40 * iconScale}`}
 							color="white"
@@ -194,7 +187,7 @@ export default function MainScreen(props) {
 						}
 					>
 						<RiHome2Line
-							style={{ padding: "6px" }}
+							className="react-icons"
 							onClick={handleHome}
 							size={`${40 * iconScale}`}
 							color="white"
@@ -273,6 +266,8 @@ export default function MainScreen(props) {
 				setSizeOfFontLarge={setSizeOfFontLarge}
 				width={width}
 				progressBarHeight={progressBarHeight}
+				handleHome={handleHome}
+				handleSetting={handleSetting}
 			/>
 			<Disclaimer
 				sizeOfFont={sizeOfFont}
