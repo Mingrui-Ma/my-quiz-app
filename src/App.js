@@ -73,7 +73,7 @@ function App() {
 
 	function handleCountDownChange(e) {
 		setHasCountDown(e.target.value);
-		console.log("has count down is now, ", e.target.value);
+		// console.log("has count down is now, ", e.target.value);
 	}
 
 	function handleCountDownTimeChange(e) {
