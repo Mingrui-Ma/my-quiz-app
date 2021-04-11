@@ -56,7 +56,7 @@ export default function StartScreen(props) {
 			"medium-width-startScreen-category"
 		),
 		[historyWidth, setHistoryWidth] = useState(160),
-		[historyBottom, setHistoryBottom] = useState(220),
+		[historyBottom, setHistoryBottom] = useState(210),
 		[historyBorder, setHistoryBorder] = useState(3),
 		[navbarBrandWidth, setNavbarBrandWidth] = useState(306);
 
@@ -73,7 +73,7 @@ export default function StartScreen(props) {
 
 	useEffect(() => {
 		function handleKeyDown(e) {
-			console.log(`key code: ${e.code}`);
+			// console.log(`key code: ${e.code}`);
 			if (
 				e.code === "Enter" ||
 				e.code === "Space" ||
@@ -93,7 +93,7 @@ export default function StartScreen(props) {
 			setFieldWidth("medium-width-startScreen-field");
 			setCategoryWidth("medium-width-startScreen-category");
 			setHistoryWidth(160);
-			setHistoryBottom(220);
+			setHistoryBottom(210);
 			setHistoryBorder(3);
 			// console.log("setting width now medium");
 		}
@@ -101,7 +101,7 @@ export default function StartScreen(props) {
 			setFieldWidth("small-width-startScreen-field");
 			setCategoryWidth("small-width-startScreen-category");
 			setHistoryWidth(130);
-			setHistoryBottom(190);
+			setHistoryBottom(170);
 			setHistoryBorder(2);
 			// console.log("setting width now small");
 		}
@@ -131,11 +131,11 @@ export default function StartScreen(props) {
 	useEffect(() => {
 		if (hasCountDown == "true") {
 			setCountDownSettingVisibility("inline");
-			console.log("countdown now visible.");
+			// console.log("countdown now visible.");
 		}
 		if (hasCountDown == "false") {
 			setCountDownSettingVisibility("none");
-			console.log("countdown now invisible.");
+			// console.log("countdown now invisible.");
 		}
 	}, [hasCountDown]);
 
