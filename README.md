@@ -12,7 +12,6 @@ The `Question` component, which is embedded in the `MainScreen` component, track
 
 #### Extra Features
 
-1. **Settings**: Most of the other extra features described below are accessible in the Settings menu
 2. **Score history**: The starting screen shows the score history in the current session. The bullet point is either a thumb-up or thumb-down emoticon, depending on the score the user got.
 3. **Answer notification**: After submitting a question, a notification tells the user whether that question was answered correctly. This can be turned off in the settings menu, and the amount of time the notification is visible for can also be tweaked (option only visible if notification is on). 
 4. **Timed answer**: Gives the user limited time to answer each question. When the time runs out the quiz treats as if the user submitted with the currently chosen answer. This can be turned off in the settings menu, and the amount of time allotted to answering the question can also be tweaked (option only visible if timed answer is on).
