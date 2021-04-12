@@ -18,4 +18,4 @@ The `Question` component, which is embedded in the `MainScreen` component, track
 4. **Quality of life features**: 3 font sizes; tooltip pop-ups; auto focus on the input field when clicking on its label; keyboard hotkeys.
 
 #### Activity Diagram
-![](https://imgur.com/FoCMhLP.jpg)
+![](https://imgur.com/TbQsC0c.jpg)
